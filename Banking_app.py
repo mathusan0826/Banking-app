@@ -1,12 +1,12 @@
-import hashlib   # secure hashing and message digest algorithms. SHA-256 (sha256),MD5 (md5),SHA-1 (sha1),SHA-512 (sha512)
-import os        #encode passwords securely
+import hashlib   # secure hashing and message digest algorithms. 
+import os        # encode passwords securely
 import datetime  # Importing datetime for timestamps
 
-# -------------------- Utility Functions --------------------
+# Utility Functions
 def encode_password(password):
     return hashlib.sha256(password.encode()).hexdigest() #password encoding code
 
-# -------------------- Global Data --------------------
+# Global Data 
 ADMIN_USERNAME = "Admin"                       ## Admin default name
 ADMIN_PASSWORD_HASH = encode_password("0826")  # Admin default password
 
@@ -21,62 +21,62 @@ def generate_account_number():
     next_account_number += 1       #Increment the global account number for the next user
     return acc_num                 #Return the current account number 
 
-# -------------------- File Handling --------------------
+#  File Handling
 def save_data():
-    # Save user credentials
-    with open("user.txt", "w") as f:
+# Save user credentials
+    with open("user.txt", "w") as user:
         for username, data in user_credentials.items():
-            f.write(f"{username},{data['password']},{data['account_no']}\n")
+            user.write(f"{username},{data['password']},{data['account_no']}\n")
     
-    # Save accounts
-    with open("customer.txt", "w") as f:
+# Save accounts
+    with open("customer.txt", "w") as cus:
         for acc_no, data in accounts.items():
-            f.write(f"{acc_no},{data['name']},{data['balance']}\n")
+            cus.write(f"{acc_no},{data['name']},{data['balance']}\n")
     
-    # Save transactions
-    with open("transaction.txt", "w") as f:
+# Save transactions
+    with open("transaction.txt", "w") as tran:
         for acc_no, data in accounts.items():
             for transaction in data["transactions"]:
-                f.write(f"{acc_no},{transaction}\n")
+                tran.write(f"{acc_no},{transaction}\n")
     
-    # Save bank accounts
-    with open("bankaccount.txt", "w") as f:
-        f.write(f"Next account number: {next_account_number}\n")
+# Save bank accounts
+    with open("bankaccount.txt", "w") as bank:
+        bank.write(f"Next account number: {next_account_number}\n")
      
 
 def load_data():
     global next_account_number  # To update the next_account_number properly
     if os.path.exists("user.txt"):
-        with open("user.txt", "r") as f:
-            for line in f:
+        with open("user.txt", "r") as user:
+            for line in user:
                 username, password, acc_no = line.strip().split(",")
                 user_credentials[username] = {"password": password, "account_no": int(acc_no)}
     
     if os.path.exists("customer.txt"):
-        with open("customer.txt", "r") as f:
-            for line in f:
+        with open("customer.txt", "r") as cus:
+            for line in cus:
                 acc_no, name, balance = line.strip().split(",")
                 accounts[int(acc_no)] = {"name": name, "balance": float(balance), "transactions": []}
     
     if os.path.exists("transaction.txt"):
-        with open("transaction.txt", "r") as f:
-            for line in f:
+        with open("transaction.txt", "r") as tran:
+            for line in tran:
                 acc_no, transaction = line.strip().split(",", 1)
                 if int(acc_no) in accounts:
                     accounts[int(acc_no)]["transactions"].append(transaction)
     
     if os.path.exists("bankaccount.txt"):
-        with open("bankaccount.txt", "r") as f:
-            next_account_number_line = f.readline()
+        with open("bankaccount.txt", "r") as bank:
+            next_account_number_line = bank.readline()
             if next_account_number_line.startswith("Next account number:"):
                 next_account_number = int(next_account_number_line.split(":")[1].strip())
 
-#start
+#start lord user page
 def load_user_credentials():
     credentials = {}
     try:
-        with open("user.txt", "r", encoding="utf-8") as f:
-            for line in f:
+        with open("user.txt", "r", encoding="utf-8") as credit:
+            for line in credit:
                 parts = line.strip().split(",")
                 if len(parts) == 3:
                     username, password, account_no = parts
@@ -91,7 +91,7 @@ def load_user_credentials():
 #end
 
 
-# -------------------- Registration --------------------
+# Registration 
 def register_user():
     username = input(" Enter new username: ")
     if username in user_credentials:
@@ -123,7 +123,7 @@ def register_user():
     print(f" Account created successfully! Account No: {acc_no}")
     save_data()
 
-# -------------------- Login --------------------
+# Login 
 def login():
     username = input(" User Name: ")
     password = input(" User Password: ")
@@ -140,7 +140,7 @@ def login():
         print(" Invalid Admin name or Password please chake.")
         return None
 
-# -------------------- Banking Functions --------------------
+#  Banking Functions 
 def deposit(account_no):
     try:
         amount = float(input("Enter amount to deposit: "))
@@ -178,7 +178,7 @@ def view_transactions(account_no):
     for t in accounts[account_no]["transactions"]:
         print(" -", t)
 
-# -------------------- Menus --------------------
+# Menus 
 def admin_menu():
     while True:
         print("\n🔐🔐🔏 Admin Menu🔑🔑🔑")
@@ -221,7 +221,7 @@ def user_menu(account_no):
         else:
             print(" Invalid choice.")
 
-# -------------------- Main Program --------------------
+#  Main Program 
 def main():
     load_data()  # Load data at the start of the program
     while True:
